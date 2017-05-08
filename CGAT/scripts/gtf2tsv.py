@@ -66,6 +66,7 @@ Command line options
 
 '''
 import sys
+import re
 import CGAT.GTF as GTF
 import CGAT.Experiment as E
 
@@ -94,6 +95,9 @@ def main(argv=None):
         help="output attributes as separate columns "
         "[default=%default].")
 
+    parser.add_option("--is-gff", dest="is_gtf", action="store_false",
+                      help="input file is in gtf format [default=%default] ")
+
     parser.add_option(
         "-i", "--invert", dest="invert", action="store_true",
         help="convert tab-separated table back to gtf "
@@ -113,10 +117,11 @@ def main(argv=None):
         output_full=False,
         invert=False,
         output_map=None,
+        is_gtf=True
     )
 
     (options, args) = E.Start(parser, argv=argv)
-
+    
     if options.output_full:
 
         # output full table with column for each attribute
@@ -126,6 +131,7 @@ def main(argv=None):
             data.append(gtf)
             attributes = attributes.union(set(gtf.keys()))
 
+                     
         # remove gene_id and transcript_id, as they are used
         # explicitely later
         attributes.difference_update(["gene_id", "transcript_id"])
@@ -139,43 +145,17 @@ def main(argv=None):
                       "start", "end", "score", "strand",
                       "frame", "gene_id",
                       "transcript_id", ] + attributes
+        attributes = header
 
         options.stdout.write("\t".join(header) + "\n")
-
-        if options.only_attributes:
-            for gtf in data:
-                options.stdout.write("\t".join(map(str, (gtf.gene_id,
-                                                         gtf.transcript_id,
-                                                         ))))
-                for a in attributes:
-                    if a in ("gene_id", "transcript_id"):
-                        continue
-                    try:
-                        val = getattr(gtf, a)
-                    except AttributeError:
-                        val = ""
-                    options.stdout.write("\t%s" % val)
-                options.stdout.write("\n")
-        else:
-            for gtf in data:
-                options.stdout.write("\t".join(map(str, (gtf.contig,
-                                                         gtf.source,
-                                                         gtf.feature,
-                                                         gtf.start,
-                                                         gtf.end,
-                                                         gtf.score,
-                                                         gtf.strand,
-                                                         gtf.frame,
-                                                         gtf.gene_id,
-                                                         gtf.transcript_id,
-                                                         ))))
-                for a in attributes:
-                    try:
-                        val = getattr(gtf, a)
-                    except AttributeError:
-                        val = ""
-                    options.stdout.write("\t%s" % val)
-                options.stdout.write("\n")
+        for gtf in data:
+            for a in attributes:
+                try:
+                    val = getattr(gtf, a)
+                except AttributeError:
+                    val = ""
+                options.stdout.write("\t%s" % val)
+            options.stdout.write("\n")
 
     elif options.invert:
 
