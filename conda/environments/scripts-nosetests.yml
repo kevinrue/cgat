@@ -31,7 +31,7 @@ dependencies:
 - pandas
 - pep8
 - pybedtools
-- pysam 0.11.1
+- pysam=0.11.1
 - python-weblogo
 - rdflib
 - rpy2
