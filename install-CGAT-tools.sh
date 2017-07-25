@@ -395,6 +395,9 @@ if [[ $TRAVIS_INSTALL ]] || [[ $JENKINS_INSTALL ]] ; then
    log "activating CGAT conda environment"
    source $CONDA_INSTALL_DIR/bin/activate $CONDA_INSTALL_ENV
 
+   # show conda environment used for testing
+   conda env export
+
    # SLV: workaround until bx-python is available with Python 3
    log "pip-installing additional packages"
    pip install bx-python
