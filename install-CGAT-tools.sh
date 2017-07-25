@@ -295,7 +295,8 @@ log "installing conda CGAT environment"
 # * Latest R 3.3.2 available in conda: Problems with icu here https://travis-ci.org/CGATOxford/cgat/builds/240711411 and here https://github.com/ContinuumIO/anaconda-issues/issues/1403
 # * Latest pysam works with the CGAT code: the gff3 support is broken, best not to use 0.11.2 for now (AH comment)
 #conda create -q -n $CONDA_INSTALL_ENV $CONDA_INSTALL_TYPE python=$INSTALL_PYTHON_VERSION pysam=0.11.1 r=3.3.1 gcc --override-channels --channel bioconda --channel r --channel defaults --channel conda-forge --yes
-conda env create -f conda/environments/scripts-nosetests.yml
+wget https://raw.githubusercontent.com/CGATOxford/cgat/SLV-update-install/conda/environments/scripts-nosetests.yml
+conda env create -f scripts-nosetests.yml
 
 log "installing CGAT code into conda environment"
 # if installation is 'devel' (outside of travis), checkout latest version from github
