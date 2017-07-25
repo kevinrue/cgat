@@ -43,7 +43,7 @@ dependencies:
 - pip:
   - bx-python==0.7.3
 # R deps
-- r-base
+- r-base=3.3.1
 - r-coloc
 - r-ggplot2
 - r-qqman
