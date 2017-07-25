@@ -1,20 +1,17 @@
+
 name: cgat-s
+
 channels:
 - bioconda
 - conda-forge
 - defaults
+
 dependencies:
 # system deps
 - nomkl
 - gcc
 - zlib
 - libpng
-# bioinformatics tools
-- bedtools
-- samtools
-- ucsc-wigtobigwig
-- ucsc-bedtobigbed
-- ucsc-bedgraphtobigwig
 # python deps
 - python=3.5
 - biopython
@@ -30,7 +27,6 @@ dependencies:
 - openpyxl
 - pandas
 - pep8
-- pybedtools
 - pysam=0.11.1
 - python-weblogo
 - rdflib
@@ -47,3 +43,4 @@ dependencies:
 - r-coloc
 - r-ggplot2
 - r-qqman
+
