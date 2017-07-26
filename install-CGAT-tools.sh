@@ -191,7 +191,7 @@ log "installing CGAT environment"
 # https://conda.io/docs/using/envs.html#use-environment-from-file
 
 if [[ $INSTALL_SCRIPTS ]] ; then
-   conda create -n ${CONDA_INSTALL_ENV} ${CONDA_INSTALL_TYPE}
+   conda create -n ${CONDA_INSTALL_ENV} ${CONDA_INSTALL_TYPE} -y
 else
    # to-update once we merge to master:
    # wget -O env.yml https://raw.githubusercontent.com/CGATOxford/cgat/conda/environments/${CONDA_INSTALL_TYPE}
@@ -333,10 +333,11 @@ if [[ $TRAVIS_INSTALL ]] || [[ $JENKINS_INSTALL ]] ; then
 
 else
 
-   if [[ $CONDA_INSTALL_TYPE ]] ; then
+   source $CONDA_INSTALL_DIR/bin/activate $CONDA_INSTALL_ENV
+   conda list | grep cgat-scripts > /dev/null
 
-      # prepare environment
-      source $CONDA_INSTALL_DIR/bin/activate $CONDA_INSTALL_ENV
+   if [[ $? -eq 1 ]] ; then
+      # this is "cgat-devel" so tests can be run
 
       if [[ $INSTALL_ZIP ]] ; then
          cd $CGAT_HOME/cgat-master
@@ -380,14 +381,13 @@ else
       fi
      
    else
+      # in this case, the installation found was "cgat-scripts" so no need to run tests
       echo
-      echo " There was an error running the tests. "
-      echo " Execution aborted. "
+      echo " You installed the cgat-scripts, which has been properly tested before. "
+      echo " No need to test. Exiting now... "
       echo
 
-      print_env_vars
-
-      exit 1
+      exit 0
    fi
 
 fi # if-OS
