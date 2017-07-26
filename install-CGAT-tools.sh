@@ -5,7 +5,7 @@
 # http://jvns.ca/blog/2017/03/26/bash-quirks/
 
 # exit when a command fails
-set -o errexit
+#set -o errexit
 
 # exit if any pipe commands fail
 set -o pipefail
@@ -20,107 +20,6 @@ set -o pipefail
 log() {
    echo "# install-CGAT-tools.sh log | `hostname` | `date` | $1 "
 }
-
-# message to display when the OS is not correct
-sanity_check_os() {
-   echo
-   echo " Unsupported operating system: $OS"
-   echo " Installation aborted."
-   echo 
-   echo " Supported operating systems are: "
-   echo " Ubuntu 12.x"
-   echo " CentOS 6.x"
-   echo " Scientific Linux 6.x"
-   echo
-   exit 1;
-} # sanity_check_os
-
-
-# function to detect the Operating System
-detect_os() {
-
-if [[ -f /etc/os-release ]]; then
-
-   OS=$(cat /etc/os-release | awk '/VERSION_ID/ {sub("="," "); print $2;}' | sed 's/\"//g' | awk '{sub("\\."," "); print $1;}')
-   if [[ "$OS" != "12" ]] ; then
-
-      echo       
-      echo " Sorry, this version of Ubuntu has not been tested. Only Ubuntu 12.x is supported so far. "
-      echo
-      exit 1;
-
-   fi
-
-   OS="ubuntu"
-
-elif [[ -f /etc/system-release ]]; then
-
-   OP=$(cat /etc/system-release | awk ' {print $1;}')
-   if [[ "$OP" == "Scientific" ]] ; then
-      OP=$(cat /etc/system-release | awk ' {print $4;}' | awk '{sub("\\."," "); print $1;}')
-      if [[ "$OP" != "6" ]] ; then
-         echo
-         echo " Sorry, this version of Scientific Linux has not been tested. Only 6.x versions are supported so far. "
-         echo
-         exit 1;
-      else
-         OS="sl"
-      fi
-   elif [[ "$OP" == "CentOS" ]] ; then
-      OP=$(cat /etc/system-release | awk ' {print $3;}' | awk '{sub("\\."," "); print $1;}')
-      if [[ "$OP" != "6" ]] ; then
-         echo
-         echo " Sorry, this version of CentOS has not been tested. Only 6.x versions are supported so far. "
-         echo
-         exit 1;
-      else
-         OS="centos"
-      fi
-   else
-      sanity_check_os
-   fi
-
-else
-
-   sanity_check_os
-
-fi
-} # detect_os
-
-
-# install operating system dependencies
-install_os_packages() {
-
-detect_os
-
-if [[ "$OS" == "ubuntu" ]] || [[ "$OS" == "travis" ]] ; then
-
-   log "installing packages for Ubuntu "
-
-   sudo apt-get --quiet install -y gcc g++ zlib1g-dev libssl-dev libssl1.0.0 libbz2-dev libfreetype6-dev libpng12-dev libblas-dev libatlas-dev liblapack-dev gfortran libpq-dev r-base-dev libreadline-dev libmysqlclient-dev libboost-dev libsqlite3-dev;
-
-elif [[ "$OS" == "sl" ]] || [[ "$OS" == "centos" ]] ; then
-
-   log "installing packages for Scientific Linux / CentOS "
-
-   yum -y install gcc zlib-devel openssl-devel bzip2-devel gcc-c++ freetype-devel libpng-devel blas atlas lapack gcc-gfortran postgresql-devel R-core-devel readline-devel mysql-devel boost-devel sqlite-devel
-
-   # additional configuration for scipy (Scientific Linux only)
-   if [[ "$OS" == "sl" ]] ; then
-      ln -s /usr/lib64/libatlas.so.3 /usr/lib64/libatlas.so
-   fi
-
-   # additional configuration for blas and lapack
-   ln -s /usr/lib64/libblas.so.3 /usr/lib64/libblas.so
-   ln -s /usr/lib64/liblapack.so.3 /usr/lib64/liblapack.so;
-
-else
-
-   sanity_check_os $OS
-
-fi # if-OS
-} # install_os_packages
-
 
 # detect CGAT installation
 detect_cgat_installation() {
@@ -149,13 +48,13 @@ get_cgat_env() {
 if [[ $TRAVIS_INSTALL ]] ; then
 
    CGAT_HOME=$TRAVIS_BUILD_DIR
-   CONDA_INSTALL_TYPE="cgat-scripts-nosetests"
+   CONDA_INSTALL_TYPE="scripts-nosetests.yml"
    INSTALL_PYTHON_VERSION=$TRAVIS_PYTHON_VERSION
 
 elif [[ $JENKINS_INSTALL ]] ; then
 
    CGAT_HOME=$WORKSPACE
-   CONDA_INSTALL_TYPE="cgat-scripts-nosetests"
+   CONDA_INSTALL_TYPE="scripts-nosetests.yml"
    INSTALL_PYTHON_VERSION=$JENKINS_PYTHON_VERSION
 
 else
@@ -165,13 +64,13 @@ else
    fi
 
    if [[ -z $INSTALL_PYTHON_VERSION ]] ; then
-      INSTALL_PYTHON_VERSION=2
+      INSTALL_PYTHON_VERSION=3
    fi
 
    if [[ $INSTALL_SCRIPTS ]] ; then
       CONDA_INSTALL_TYPE="cgat-scripts"
    elif [[ $INSTALL_DEVEL ]] ; then
-      CONDA_INSTALL_TYPE="cgat-scripts-devel"
+      CONDA_INSTALL_TYPE="scripts-devel.yml"
    elif [[ $INSTALL_TEST ]] || [[ $INSTALL_UPDATE ]] ; then
       if [[ -d $CGAT_HOME/conda-install ]] ; then
          AUX=`find $CGAT_HOME/conda-install/envs/cgat-* -maxdepth 0`
@@ -194,7 +93,7 @@ else
 fi # if travis install
 
 CONDA_INSTALL_DIR=$CGAT_HOME/conda-install
-CONDA_INSTALL_ENV=$(echo $CONDA_INSTALL_TYPE | cut -c1-6)
+CONDA_INSTALL_ENV="cgat-s"
 
 } # get_cgat_env
 
@@ -279,7 +178,6 @@ wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 log "installing miniconda"
 bash Miniconda3-latest-Linux-x86_64.sh -b -p $CONDA_INSTALL_DIR
 source ${CONDA_INSTALL_DIR}/bin/activate
-#export PATH="$CONDA_INSTALL_DIR/bin:$PATH"
 hash -r
 
 # install cgat environment
@@ -288,15 +186,18 @@ conda config --set allow_softlinks False
 conda update -q conda --yes
 conda info -a
 
-log "installing conda CGAT environment"
+log "installing CGAT environment"
 # Now using conda environment:
 # https://conda.io/docs/using/envs.html#use-environment-from-file
-# SLV workaround until problems are resolved for:
-# * Latest R 3.3.2 available in conda: Problems with icu here https://travis-ci.org/CGATOxford/cgat/builds/240711411 and here https://github.com/ContinuumIO/anaconda-issues/issues/1403
-# * Latest pysam works with the CGAT code: the gff3 support is broken, best not to use 0.11.2 for now (AH comment)
-#conda create -q -n $CONDA_INSTALL_ENV $CONDA_INSTALL_TYPE python=$INSTALL_PYTHON_VERSION pysam=0.11.1 r=3.3.1 gcc --override-channels --channel bioconda --channel r --channel defaults --channel conda-forge --yes
-wget https://raw.githubusercontent.com/CGATOxford/cgat/SLV-update-install/conda/environments/scripts-nosetests.yml
-conda env create -f scripts-nosetests.yml
+
+if [[ $INSTALL_SCRIPTS ]] ; then
+   conda create -n ${CONDA_INSTALL_ENV} ${CONDA_INSTALL_TYPE}
+else
+   # to-update once we merge to master:
+   # wget -O env.yml https://raw.githubusercontent.com/CGATOxford/cgat/conda/environments/${CONDA_INSTALL_TYPE}
+   wget -O env.yml https://raw.githubusercontent.com/CGATOxford/cgat/SLV-update-install/conda/environments/${CONDA_INSTALL_TYPE}
+   conda env create -f env.yml
+fi
 
 log "installing CGAT code into conda environment"
 # if installation is 'devel' (outside of travis), checkout latest version from github
@@ -320,9 +221,6 @@ if [[ "$OS" != "travis" ]] ; then
 
       # activate cgat environment
       source $CONDA_INSTALL_DIR/bin/activate $CONDA_INSTALL_ENV
-
-      # SLV: workaround until bx-python is available with Python 3
-      pip install bx-python
 
       # Set up other environment variables
       setup_env_vars
@@ -402,10 +300,6 @@ if [[ $TRAVIS_INSTALL ]] || [[ $JENKINS_INSTALL ]] ; then
 
    # show conda environment used for testing
    conda env export
-
-   # SLV: workaround until bx-python is available with Python 3
-   log "pip-installing additional packages"
-   pip install bx-python
 
    # python preparation
    log "install CGAT code into conda environment"
@@ -581,12 +475,8 @@ echo " ./install-CGAT-tools.sh --cgat-devel [--location </full/path/to/folder/wi
 echo
 echo " Both installations create a new Conda environment ready to run the CGAT code."
 echo
-echo " The default Python version for CGAT is 2.7 but we are moving the code to Python 3."
-echo " If you want to try our code running with Python 3, please type:"
-echo " ./install-CGAT-tools.sh --cgat-devel --python 3 [--location </full/path/to/folder/without/trailing/slash>]"
-echo
 echo " It is also possible to install/test a specific branch of the code on github:"
-echo " ./install-CGAT-tools.sh --cgat-devel --python 3 --branch <name-of-branch> [--location </full/path/to/folder/without/trailing/slash>]"
+echo " ./install-CGAT-tools.sh --cgat-devel --branch <name-of-branch> [--location </full/path/to/folder/without/trailing/slash>]"
 echo
 echo " On the other hand, if you are looking for other alternative installation options please visit:"
 echo " https://www.cgat.org/downloads/public/cgat/documentation/CGATInstallation.html"
@@ -759,10 +649,6 @@ elif [[ $JENKINS_INSTALL  ]] ; then
   conda_test
 
 else 
-
-  if [[ $OS_PKGS ]] ; then
-     install_os_packages
-  fi
 
   if [[ $INSTALL_SCRIPTS ]] || [[ $INSTALL_DEVEL ]] ; then
      conda_install
