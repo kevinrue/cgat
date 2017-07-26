@@ -12,6 +12,8 @@ dependencies:
 - gcc
 - zlib
 - libpng
+# bioinformatics tools
+- ucsc-wigtobigwig
 # python deps
 - python=3.5
 - biopython
@@ -27,6 +29,7 @@ dependencies:
 - openpyxl
 - pandas
 - pep8
+- pybedtools
 - pysam=0.11.1
 - python-weblogo
 - rdflib
