@@ -13,6 +13,7 @@ dependencies:
 - zlib
 - libpng
 # bioinformatics tools
+- bedtools
 - ucsc-wigtobigwig
 # python deps
 - python=3.5
