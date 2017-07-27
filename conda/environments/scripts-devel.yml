@@ -12,10 +12,8 @@ dependencies:
 - gcc
 - zlib
 - libpng
-- mysqlclient
+#- mysqlclient # I think this allows "import MySQLdb"
 # bioinformatics tools
-- bedtools
-- samtools
 - ucsc-wigtobigwig
 - ucsc-bedtobigbed
 - ucsc-bedgraphtobigwig
@@ -28,6 +26,7 @@ dependencies:
 - future
 - ggplot
 - jinja2
+- lzo
 - matplotlib
 - networkx
 - nose
@@ -41,13 +40,15 @@ dependencies:
 - python-weblogo
 - rdflib
 - rpy2
+- scikit-learn
 - scipy
 - setuptools
 - six
-- scikit-learn
+- sqlalchemy
 - pyyaml
 - pip:
   - bx-python==0.7.3
+#  - MySQL-python==1.2.5
 # R deps
 - r-base
 - r-coloc
@@ -57,6 +58,7 @@ dependencies:
 - r-gridbase
 - r-gridextra
 - r-gtools
+- r-mapdata
 - r-maps
 - r-optparse
 - r-plyr
@@ -75,6 +77,7 @@ dependencies:
 - bioconductor-biomart
 - bioconductor-deseq
 - bioconductor-deseq2
+- bioconductor-dexseq
 - bioconductor-edger
 - bioconductor-hilbertvis
 - bioconductor-ihw
@@ -85,5 +88,5 @@ dependencies:
 - bioconductor-qvalue
 - bioconductor-rtracklayer
 - bioconductor-siggenes
-- libglu
+#- libglu
 
