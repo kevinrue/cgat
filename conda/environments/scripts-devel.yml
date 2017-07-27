@@ -77,7 +77,7 @@ dependencies:
 - bioconductor-biomart
 - bioconductor-deseq
 - bioconductor-deseq2
-- bioconductor-dexseq
+#- bioconductor-dexseq # [py27]
 - bioconductor-edger
 - bioconductor-hilbertvis
 - bioconductor-ihw
