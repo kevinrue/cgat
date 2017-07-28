@@ -206,17 +206,22 @@ if [[ "$OS" != "travis" ]] ; then
 
    if [[ $INSTALL_DEVEL ]] ; then
 
+      # make sure you are in the CGAT_HOME folder
+      cd $CGAT_HOME
+
       if [[ $INSTALL_ZIP ]] ; then
 	 # get the latest version from Git Hub in zip format
-	 cd $CGAT_HOME
          wget https://github.com/CGATOxford/cgat/archive/$INSTALL_BRANCH.zip
          unzip master.zip
-	 cd cgat-master/
+         rm master.zip
+         mv cgat-master/ cgat-scripts/
       else
          # get latest version from Git Hub with git clone
-         git clone --branch=$INSTALL_BRANCH https://github.com/CGATOxford/cgat.git $CGAT_HOME/cgat-code
-         cd $CGAT_HOME/cgat-code
+         git clone --branch=$INSTALL_BRANCH https://github.com/CGATOxford/cgat.git $CGAT_HOME/cgat-scripts
       fi
+
+      # make sure you are in the CGAT_HOME/cgat-scripts folder
+      cd $CGAT_HOME/cgat-scripts
 
       # activate cgat environment
       source $CONDA_INSTALL_DIR/bin/activate $CONDA_INSTALL_ENV
@@ -264,7 +269,7 @@ if [[ "$OS" != "travis" ]] ; then
    else
       clear
       echo 
-      echo " The CGAT code was successfully installed!"
+      echo " The code was successfully installed!"
       echo
       echo " To activate the CGAT environment type: "
       echo " $ source $CONDA_INSTALL_DIR/bin/activate $CONDA_INSTALL_ENV"
@@ -338,11 +343,8 @@ else
    if [[ $? -eq 1 ]] ; then
       # this is "cgat-devel" so tests can be run
 
-      if [[ $INSTALL_ZIP ]] ; then
-         cd $CGAT_HOME/cgat-master
-      else
-         cd $CGAT_HOME/cgat-code
-      fi
+      # make sure you are in the CGAT_HOME/cgat-scripts folder
+      cd $CGAT_HOME/cgat-scripts
 
       # remove install_requires (no longer required with conda package)
       sed -i'' -e '/REPO_REQUIREMENT/,/pass/d' setup.py
