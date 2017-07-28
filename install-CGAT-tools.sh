@@ -182,12 +182,11 @@ hash -r
 
 # install cgat environment
 log "updating conda environment"
-conda config --set allow_softlinks False
 conda update -q conda --yes
 conda info -a
 
 log "installing CGAT environment"
-# Now using conda environment:
+# Now using conda environment files:
 # https://conda.io/docs/using/envs.html#use-environment-from-file
 
 if [[ $INSTALL_SCRIPTS ]] ; then
@@ -478,9 +477,6 @@ echo
 echo " It is also possible to install/test a specific branch of the code on github:"
 echo " ./install-CGAT-tools.sh --cgat-devel --branch <name-of-branch> [--location </full/path/to/folder/without/trailing/slash>]"
 echo
-echo " On the other hand, if you are looking for other alternative installation options please visit:"
-echo " https://www.cgat.org/downloads/public/cgat/documentation/CGATInstallation.html"
-echo 
 echo " To test the installation:"
 echo " ./install-CGAT-tools.sh --test [--location </full/path/to/folder/without/trailing/slash>]"
 echo
