@@ -34,7 +34,7 @@ dependencies:
 - pep8
 - psycopg2
 - pybedtools
-- pysam
+- pysam=0.11.1
 - python-lzo
 - python-weblogo
 - pyyaml
