@@ -16,9 +16,9 @@ dependencies:
 - ucsc-wigtobigwig
 # python deps
 - python=3.5
+- alignlib-lite
 - biopython
 - cython
-- alignlib-lite
 - future
 - ggplot
 - jinja2
@@ -32,13 +32,13 @@ dependencies:
 - pybedtools
 - pysam=0.11.1
 - python-weblogo
+- pyyaml
 - rdflib
 - rpy2
+- scikit-learn
 - scipy
 - setuptools
 - six
-- scikit-learn
-- pyyaml
 - pip:
   - bx-python==0.7.3
 # R deps

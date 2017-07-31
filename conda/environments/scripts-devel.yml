@@ -18,15 +18,14 @@ dependencies:
 - ucsc-bedgraphtobigwig
 # python deps
 - python=3.5
+- alignlib-lite
 - biopython
 - cython
-- alignlib-lite
 - future
 - ggplot
 - jinja2
-- python-lzo
 - matplotlib
-- mysqlclient # import MySQLdb
+- mysqlclient
 - networkx
 - nose
 - numpy
@@ -35,7 +34,8 @@ dependencies:
 - pep8
 - psycopg2
 - pybedtools
-- pysam=0.11.1
+- pysam
+- python-lzo
 - python-weblogo
 - pyyaml
 - rdflib
@@ -46,7 +46,7 @@ dependencies:
 - six
 - sqlalchemy
 - pip:
-  - bx-python==0.7.3
+  - bx-python
 # R deps
 - r-base
 - r-coloc
@@ -83,7 +83,6 @@ dependencies:
 - bioconductor-masigpro
 - bioconductor-medips
 - bioconductor-metagenomeseq
-- bioconductor-qvalue
 - bioconductor-rtracklayer
 - bioconductor-siggenes
 

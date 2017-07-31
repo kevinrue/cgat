@@ -194,7 +194,7 @@ if [[ $INSTALL_SCRIPTS ]] ; then
 else
    # to-update once we merge to master:
    # wget -O env.yml https://raw.githubusercontent.com/CGATOxford/cgat/conda/environments/${CONDA_INSTALL_TYPE}
-   wget -O env.yml https://raw.githubusercontent.com/CGATOxford/cgat/SLV-update-install/conda/environments/${CONDA_INSTALL_TYPE}
+   wget -O env.yml https://raw.githubusercontent.com/CGATOxford/cgat/${TRAVIS_BRANCH}/conda/environments/${CONDA_INSTALL_TYPE}
    conda env create -f env.yml
 fi
 
