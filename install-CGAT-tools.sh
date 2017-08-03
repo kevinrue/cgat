@@ -507,8 +507,6 @@ OS="default"
 TRAVIS_INSTALL=
 # jenkins testing
 JENKINS_INSTALL=
-# install operating system's dependencies
-OS_PKGS=
 # conda installation type
 INSTALL_SCRIPTS=
 INSTALL_DEVEL=
@@ -522,7 +520,7 @@ UNINSTALL_DIR=
 # where to install CGAT code
 CGAT_HOME=
 # instead of cloning with git, we can download zipped CGAT code
-INSTALL_ZIP=
+INSTALL_ZIP=1
 # which python version to use
 INSTALL_PYTHON_VERSION=
 # which github branch to use (default: master)
@@ -531,7 +529,7 @@ INSTALL_BRANCH="master"
 INPUT_ARGS=$(getopt -n "$0" -o htj1234567:zp:b: --long "help,
                                                         travis,
                                                         jenkins,
-                                                        install-os-packages,
+                                                        git,
                                                         cgat-scripts,
                                                         cgat-devel,
                                                         test,
@@ -561,9 +559,9 @@ do
       JENKINS_INSTALL=1
       shift ;
 
-  elif [[ "$1" == "--install-os-packages" ]] ; then
+  elif [[ "$1" == "--git" ]] ; then
       
-      OS_PKGS=1
+      INSTALL_ZIP=0
       shift ;
 
   elif [[ "$1" == "--cgat-scripts" ]] ; then
