@@ -108,9 +108,26 @@ R_DEPS[zinba]="ignore"
 
 # dictionary to translate R deps
 declare -A MISC_DEPS
+MISC_DEPS[ascp]="ignore"
+MISC_DEPS[bamToBed]="bedtools"
+MISC_DEPS[bedtools]="bedtools"
+MISC_DEPS[bits_test]="ignore"
+MISC_DEPS[cat]="coreutils"
 MISC_DEPS[gat-run.py]="gat"
+MISC_DEPS[grep]="grep"
+MISC_DEPS[gzip]="ignore"
 MISC_DEPS[intersectBed]="bedtools"
+MISC_DEPS[java]="ignore"
+MISC_DEPS[paste]="coreutils"
+MISC_DEPS[prefetch]="ignore"
+MISC_DEPS[python]="ignore"
+MISC_DEPS[rm]="coreutils"
 MISC_DEPS[samtools]="samtools"
+MISC_DEPS[sort]="coreutils"
+MISC_DEPS[tr]="tr"
+MISC_DEPS[wget]="wget"
+MISC_DEPS[wigToBigWig]="ucsc-wigtobigwig"
+
 
 # function to report issues and exit
 report_problem() {
@@ -167,20 +184,17 @@ find_misc_programs() {
    source /ifs/apps/conda-envs/bin/activate py3-basic
 
    TMP_EXT=$(mktemp)
-   find ${FIND_DIR} -iname "*.py" \
-        > ${TMP_EXT}
+   find ${FIND_DIR} -iname "*.py" > ${TMP_EXT}
 
    for code in `cat ${TMP_EXT}` ;
    do
 
-      python ${REPO_FOLDER}/scripts/cgat_check_deps.py ${code} \
-       | egrep -v 'PATH|^$|^cgat$|^No|^R|^Rscript|^cd' \
-       >> ${TMP_MISC}
+      python ${REPO_FOLDER}/scripts/cgat_check_deps.py -s ${code} >> ${TMP_MISC}
 
    done
 
    # return unique names
-   cat ${TMP_MISC} | sort -u > ${TMP_EXT}
+   awk '/^Program/ {print $2}' ${TMP_MISC} | egrep -v '^-' | sort -u > ${TMP_EXT}
    cp ${TMP_EXT} ${TMP_MISC}
 
    # revert to original env
