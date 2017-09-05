@@ -327,10 +327,6 @@ else
    # Misc
    find_misc_programs "${TMP_D}"
 
-   echo "###"
-   for f in `ls ${TMP_D}` ; do echo "${TMP_D}/${f}" ; grep statement ${TMP_D}/${f} ; done
-   echo "###"
-
    # clean up
    [[ -n "${TMP_D}" ]] && rm -rf "${TMP_D}"
 
