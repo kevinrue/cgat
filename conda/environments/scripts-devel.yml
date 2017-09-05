@@ -17,7 +17,7 @@ dependencies:
 - ucsc-bedtobigbed
 - ucsc-bedgraphtobigwig
 # python deps
-- python=3.5
+- python
 - alignlib-lite
 - biopython
 - cython
