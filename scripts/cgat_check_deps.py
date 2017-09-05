@@ -82,7 +82,7 @@ def checkDepedencies(pipeline):
             elif hasattr(node.value, 'left') and hasattr(node.value.left, 's'):
                 statement = node.value.left.s
 
-            if len(statement) > 0:
+            if len(statement) > 0 and not statement.startswith(' -'):
                 # clean up statement, code copied from Execution module of Pipeline.py
                 statement = " ".join(re.sub("\t+", " ", statement).split("\n")).strip()
                 if statement.endswith(";"):

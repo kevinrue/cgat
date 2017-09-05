@@ -34,14 +34,31 @@ PY_DEPS[bs4]="beautifulsoup4"
 PY_DEPS[bx]="ignore"
 PY_DEPS[configparser]="ignore"
 PY_DEPS[drmaa]="python-drmaa"
+PY_DEPS[future]="future"
+PY_DEPS[ggplot]="ggplot"
+PY_DEPS[jinja2]="jinja2"
 PY_DEPS[lzo]="python-lzo"
+PY_DEPS[matplotlib]="matplotlib"
 PY_DEPS[metaphlan_utils]="ignore"
+PY_DEPS[networkx]="networkx"
+PY_DEPS[numpy]="numpy"
+PY_DEPS[openpyxl]="openpyxl"
+PY_DEPS[pandas]="pandas"
+PY_DEPS[psycopg2]="psycopg2"
 PY_DEPS[pyBigWig]="pybigwig"
+PY_DEPS[pybedtools]="pybedtools"
+PY_DEPS[pysam]="pysam"
 PY_DEPS[pyximport]="ignore"
+PY_DEPS[rdflib]="rdflib"
+PY_DEPS[rpy2]="rpy2"
+PY_DEPS[scipy]="scipy"
+PY_DEPS[six]="six"
 PY_DEPS[sklearn]="scikit-learn"
+PY_DEPS[sqlalchemy]="sqlalchemy"
 PY_DEPS[web]="web.py"
 PY_DEPS[weblogolib]="python-weblogo"
 PY_DEPS[yaml]="pyyaml"
+
 
 # dictionary to translate R deps
 declare -A R_DEPS
@@ -115,7 +132,7 @@ MISC_DEPS[bits_test]="ignore"
 MISC_DEPS[cat]="coreutils"
 MISC_DEPS[gat-run.py]="gat"
 MISC_DEPS[grep]="grep"
-MISC_DEPS[gzip]="ignore"
+MISC_DEPS[gzip]="ignore" # gzip not available in conda
 MISC_DEPS[intersectBed]="bedtools"
 MISC_DEPS[java]="ignore"
 MISC_DEPS[paste]="coreutils"
@@ -124,9 +141,10 @@ MISC_DEPS[python]="ignore"
 MISC_DEPS[rm]="coreutils"
 MISC_DEPS[samtools]="samtools"
 MISC_DEPS[sort]="coreutils"
-MISC_DEPS[tr]="tr"
+MISC_DEPS[tr]="coreutils"
 MISC_DEPS[wget]="wget"
 MISC_DEPS[wigToBigWig]="ucsc-wigtobigwig"
+MISC_DEPS[zcat]="ignore" # gzip not available in conda
 
 
 # function to report issues and exit
@@ -194,7 +212,7 @@ find_misc_programs() {
    done
 
    # return unique names
-   awk '/^Program/ {print $2}' ${TMP_MISC} | egrep -v '^-' | sort -u > ${TMP_EXT}
+   awk '/^Program/ {print $2}' ${TMP_MISC} | sort -u > ${TMP_EXT}
    cp ${TMP_EXT} ${TMP_MISC}
 
    # revert to original env
@@ -330,7 +348,7 @@ do
       [[ "${PY_DEPS[${pkg}]}" != "ignore" ]] && echo "- "${PY_DEPS[${pkg}]} >> ${TMP_DEPS}
    else
       # not found
-      echo "- "$pkg >> ${TMP_DEPS}
+      echo "? "$pkg >> ${TMP_DEPS}
    fi
 
 done
@@ -374,12 +392,20 @@ done
 
 # print R section
 R_DEPS_SIZE=$(stat --printf="%s" ${TMP_DEPS})
-[[ ${R_DEPS_SIZE} -gt 0 ]] && \
-echo "# R dependencies" && \
-echo "- r-base" && \
-sort -u ${TMP_DEPS} | grep '\- r'
-[[ ${R_DEPS_SIZE} -gt 0 ]] && \
-sort -u ${TMP_DEPS} | grep '\- bioconductor'
+
+if [[ ${R_DEPS_SIZE} -gt 0 ]] ; then
+
+   echo "# R dependencies"
+   echo "- r-base"
+   sort -u ${TMP_DEPS} | grep '^\- r'
+
+   # show bioconductor deps
+   sort -u ${TMP_DEPS} | grep '^\- bioconductor'
+
+   # show missing deps
+   sort -u ${TMP_DEPS} | grep '^? '
+
+fi
 
 
 ### process misc programs ###
@@ -402,9 +428,17 @@ do
 done
 
 # print misc section
-MISC_DEPS_SIZE=$(stat --printf="%s" ${TMP_DEPS})
-[[ ${MISC_DEPS_SIZE} -gt 0 ]] && \
-echo "# Misc dependencies" && \
+
+# Add these manually, as they are required but don't use the 'statement' variable to run them
+echo "- ucsc-wigtobigwig" >> ${TMP_DEPS}
+echo "- ucsc-bedtobigbed" >> ${TMP_DEPS}
+echo "- ucsc-bedgraphtobigwig" >> ${TMP_DEPS}
+echo "- nomkl" >> ${TMP_DEPS}
+echo "- gcc" >> ${TMP_DEPS}
+echo "- zlib" >> ${TMP_DEPS}
+echo "- libpng" >> ${TMP_DEPS}
+
+echo "# Misc dependencies"
 sort -u ${TMP_DEPS}
 
 
