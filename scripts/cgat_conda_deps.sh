@@ -316,7 +316,16 @@ else
     > ${TMP_D}/grep-patterns
 
    for f in `find ${REPO_FOLDER}/CGAT | grep -f ${TMP_D}/grep-patterns` ; do cp $f ${TMP_D}/ ; done
-   find ${REPO_FOLDER}/CGAT/scripts/ -regex '.*pyx.*' -exec cp {} ${TMP_D}/ \;
+   find ${REPO_FOLDER}/CGAT -regex '.*pyx.*' -exec cp {} ${TMP_D}/ \;
+
+   # Also bring associated module files
+   for f in `find ${TMP_D}` ; do awk '/^import CGAT/ {print $2}' $f 2>/dev/null ; done \
+    | sort -u \
+    | egrep -v 'scripts|NCL|GeneModelAnalysis' \
+    | sed 's/\./\//g' \
+    > ${TMP_D}/imported-modules
+
+   for m in `cat ${TMP_D}/imported-modules` ; do cp ${REPO_FOLDER}/$m.py ${TMP_D}/ ; done
 
    # Python
    find_python_imports "${TMP_D}"
@@ -331,6 +340,20 @@ else
    [[ -n "${TMP_D}" ]] && rm -rf "${TMP_D}"
 
 fi
+
+
+### create header of env file ###
+
+echo
+echo "name: cgat-s"
+echo
+echo "channels:"
+echo "- bioconda"
+echo "- conda-forge"
+echo "- defaults"
+echo
+echo "dependencies:"
+
 
 ### process python deps ###
 
@@ -358,6 +381,7 @@ echo "- cython" >> ${TMP_DEPS}
 echo "- nose" >> ${TMP_DEPS}
 echo "- pep8" >> ${TMP_DEPS}
 echo "- setuptools" >> ${TMP_DEPS}
+echo "- pyyaml" >> ${TMP_DEPS}
 
 # Print them all sorted
 sort -u ${TMP_DEPS}
