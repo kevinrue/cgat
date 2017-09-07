@@ -1,0 +1,92 @@
+
+name: cgat-s
+
+channels:
+- bioconda
+- conda-forge
+- defaults
+
+dependencies:
+# python dependencies
+- python
+- alignlib-lite
+- biopython
+- cython
+- future
+- ggplot
+- jinja2
+- matplotlib
+- mysqlclient
+- networkx
+- nose
+- numpy
+- openpyxl
+- pandas
+- pep8
+- psycopg2
+- pybedtools
+- pysam
+- python-lzo
+- python-weblogo
+- pyyaml
+- rdflib
+- rpy2
+- scikit-learn
+- scipy
+- setuptools
+- six
+- sqlalchemy
+- pip:
+  - bx-python
+# R dependencies
+- r-base
+- r-coloc
+- r-flashclust
+- r-ggplot2
+- r-gplots
+- r-gridbase
+- r-gridextra
+- r-gtools
+- r-mapdata
+- r-maps
+- r-optparse
+- r-plyr
+- r-qqman
+- r-rcolorbrewer
+- r-reshape
+- r-reshape2
+- r-samr
+- r-scales
+- r-sleuth
+- r-snow
+- r-vegan
+- r-venndiagram
+- r-wgcna
+- bioconductor-biobase
+- bioconductor-biomart
+- bioconductor-deseq
+- bioconductor-deseq2
+- bioconductor-dexseq
+- bioconductor-edger
+- bioconductor-hilbertvis
+- bioconductor-ihw
+- bioconductor-limma
+- bioconductor-masigpro
+- bioconductor-medips
+- bioconductor-metagenomeseq
+- bioconductor-rtracklayer
+- bioconductor-siggenes
+# Misc dependencies
+- bedtools
+- coreutils
+- gcc
+- grep
+- libpng
+- nomkl
+- samtools
+- ucsc-bedgraphtobigwig
+- ucsc-bedtobigbed
+- ucsc-wigtobigwig
+- wget
+- zlib
+

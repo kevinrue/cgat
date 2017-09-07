@@ -42,7 +42,7 @@ help_message() {
    echo " The expected output is a new conda env file matching conda packages"
    echo " listed in the first file with the version numbers listed in the second."
    echo
-   echo " ./match_conda_deps.sh <env-file> <env-export> "
+   echo " ./match_conda_deps.sh scripts-nosetests-template.yml conda-env-export.yml "
    echo
    exit 1
 }
