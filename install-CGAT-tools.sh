@@ -190,7 +190,7 @@ log "installing CGAT environment"
 # https://conda.io/docs/using/envs.html#use-environment-from-file
 
 if [[ $INSTALL_SCRIPTS ]] ; then
-   conda create -q -n ${CONDA_INSTALL_ENV} cgat-scripts --override-channels -c bioconda -c conda-forge -c defaults -y
+   conda create -q -n ${CONDA_INSTALL_ENV} cgat-scripts gcc rpy2=2.8.5 --override-channels -c bioconda -c conda-forge -c defaults -y
 else
    [[ -z ${TRAVIS_BRANCH} ]] && TRAVIS_BRANCH=${INSTALL_BRANCH}
    wget -O env.yml https://raw.githubusercontent.com/CGATOxford/cgat/${TRAVIS_BRANCH}/conda/environments/${CONDA_INSTALL_TYPE}
@@ -203,7 +203,15 @@ if [[ "$OS" != "travis" ]] ; then
 
    DEV_RESULT=0
 
-   if [[ $INSTALL_DEVEL ]] ; then
+   # activate cgat environment
+   source $CONDA_INSTALL_DIR/bin/activate $CONDA_INSTALL_ENV
+
+   if [[ $INSTALL_SCRIPTS ]] ; then
+
+      # bx-python is not py3 yet
+      pip install bx-python
+
+   elif [[ $INSTALL_DEVEL ]] ; then
 
       # make sure you are in the CGAT_HOME folder
       cd $CGAT_HOME
@@ -221,9 +229,6 @@ if [[ "$OS" != "travis" ]] ; then
 
       # make sure you are in the CGAT_HOME/cgat-scripts folder
       cd $CGAT_HOME/cgat-scripts
-
-      # activate cgat environment
-      source $CONDA_INSTALL_DIR/bin/activate $CONDA_INSTALL_ENV
 
       # Set up other environment variables
       setup_env_vars
