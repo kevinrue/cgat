@@ -1,4 +1,8 @@
 
+os:
+  - osx
+  - linux
+
 # use container-based infrastructure on Travis
 # http://docs.travis-ci.com/user/workers/container-based-infrastructure/
 # http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
@@ -12,15 +16,11 @@
 # Over there, your builds will run on a fully independent VM with 7.5 GB of (unshared) memory.
 sudo: required
 
-language: python
+language: generic
 
 env:
   global:
     - TEST_ALL=1
-
-python:
-#  - "2.7"
-  - "3.5"
 
 # Using xvfb to Run Tests That Require a GUI
 # https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-xvfb-to-Run-Tests-That-Require-a-GUI

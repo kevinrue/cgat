@@ -171,12 +171,34 @@ get_cgat_env
 mkdir -p $CGAT_HOME
 cd $CGAT_HOME
 
+# select Miniconda bootstrap script depending on Operating System
+MINICONDA=
+
+if [[ `uname` == "Linux" ]] ; then
+
+   MINICONDA="Miniconda3-latest-Linux-x86_64.sh"
+
+elif [[ `uname` == "Darwin" ]] ; then
+
+   MINICONDA="Miniconda3-latest-MacOSX-x86_64.sh"
+
+else
+
+   echo
+   echo " Unsupported operating system detected. "
+   echo
+   echo " Aborting installation... "
+   echo
+   exit 1
+
+fi
+
 log "downloading miniconda"
 # download and install conda
-wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+curl -O https://repo.continuum.io/miniconda/${MINICONDA}
 
 log "installing miniconda"
-bash Miniconda3-latest-Linux-x86_64.sh -b -p $CONDA_INSTALL_DIR
+bash ${MINICONDA} -b -p $CONDA_INSTALL_DIR
 source ${CONDA_INSTALL_DIR}/bin/activate
 hash -r
 
@@ -193,7 +215,7 @@ if [[ $INSTALL_SCRIPTS ]] ; then
    conda create -q -n ${CONDA_INSTALL_ENV} cgat-scripts gcc rpy2=2.8.5 --override-channels -c bioconda -c conda-forge -c defaults -y
 else
    [[ -z ${TRAVIS_BRANCH} ]] && TRAVIS_BRANCH=${INSTALL_BRANCH}
-   wget -O env.yml https://raw.githubusercontent.com/CGATOxford/cgat/${TRAVIS_BRANCH}/conda/environments/${CONDA_INSTALL_TYPE}
+   curl -O env.yml https://raw.githubusercontent.com/CGATOxford/cgat/${TRAVIS_BRANCH}/conda/environments/${CONDA_INSTALL_TYPE}
    conda env create -f env.yml
 fi
 
@@ -218,7 +240,7 @@ if [[ "$OS" != "travis" ]] ; then
 
       if [[ $INSTALL_ZIP ]] ; then
 	 # get the latest version from Git Hub in zip format
-         wget https://github.com/CGATOxford/cgat/archive/$INSTALL_BRANCH.zip
+         curl -O https://github.com/CGATOxford/cgat/archive/$INSTALL_BRANCH.zip
          unzip master.zip
          rm master.zip
          mv cgat-master/ cgat-scripts/
@@ -469,7 +491,7 @@ echo " This script uses Conda to install the CGAT Code Collection:"
 echo " https://www.cgat.org/downloads/public/cgat/documentation/"
 echo
 echo " If you only need to use the scripts published here:"
-echo "   https://www.cgat.org/downloads/public/cgat/documentation/cgat.html"
+echo "   https://www.ncbi.nlm.nih.gov/pubmed/24395753"
 echo " type:"
 echo " ./install-CGAT-tools.sh --cgat-scripts [--location </full/path/to/folder/without/trailing/slash>]"
 echo
@@ -530,102 +552,79 @@ INSTALL_ZIP=1
 INSTALL_PYTHON_VERSION=
 # which github branch to use (default: master)
 INSTALL_BRANCH="master"
-# variable to store input parameters
-INPUT_ARGS=$(getopt -n "$0" -o htj1234567:zp:b: --long "help,
-                                                        travis,
-                                                        jenkins,
-                                                        git,
-                                                        cgat-scripts,
-                                                        cgat-devel,
-                                                        test,
-                                                        update,
-                                                        uninstall,
-                                                        location:,
-                                                        zip,
-                                                        python:,
-                                                        branch:"  -- "$@")
-eval set -- "$INPUT_ARGS"
 
-# process all the input parameters first
-while [[ "$1" != "--" ]]
+# parse input parameters
+# https://stackoverflow.com/questions/402377/using-getopts-in-bash-shell-script-to-get-long-and-short-command-line-options
+# https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+
+while [[ $# -gt 1 ]]
 do
+key="$1"
 
-  if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]] ; then
+case $key in
 
+    --help)
     help_message
+    ;;
 
-  elif [[ "$1" == "--travis" ]] ; then
-      
-      TRAVIS_INSTALL=1
-      shift ;
+    --travis)
+    TRAVIS_INSTALL=1
+    shift # past argument
+    ;;
 
-  elif [[ "$1" == "--jenkins" ]] ; then
+    --jenkins)
+    JENKINS_INSTALL=1
+    shift # past argument
+    ;;
 
-      JENKINS_INSTALL=1
-      shift ;
+    --git)
+    INSTALL_ZIP=
+    shift
+    ;;
 
-  elif [[ "$1" == "--git" ]] ; then
-      
-      INSTALL_ZIP=0
-      shift ;
+    --cgat-scripts)
+    INSTALL_SCRIPTS=1
+    shift
+    ;;
 
-  elif [[ "$1" == "--cgat-scripts" ]] ; then
-      
-      INSTALL_SCRIPTS=1
-      shift ;
+    --cgat-devel)
+    INSTALL_DEVEL=1
+    shift
+    ;;
 
-  elif [[ "$1" == "--cgat-devel" ]] ; then
+    --test)
+    INSTALL_TEST=1
+    shift
+    ;;
 
-      INSTALL_DEVEL=1
-      shift ;
+    --update)
+    INSTALL_UPDATE=1
+    shift
+    ;;
 
-  elif [[ "$1" == "--test" ]] ; then
+    --uninstall)
+    UNINSTALL=1
+    shift
+    ;;
 
-      INSTALL_TEST=1
-      shift ;
+    --location)
+    CGAT_HOME="$2"
+    shift 2
+    ;;
 
-  elif [[ "$1" == "--update" ]] ; then
+    --zip)
+    INSTALL_ZIP=1
+    shift
+    ;;
 
-      INSTALL_UPDATE=1
-      shift ;
+    --branch)
+    INSTALL_BRANCH="$2"
+    shift 2
+    ;;
 
-  elif [[ "$1" == "--uninstall" ]] ; then
-
-      UNINSTALL=1
-      shift ; 
-
-  elif [[ "$1" == "--location" ]] ; then
-
-      CGAT_HOME="$2"
-      shift 2 ;
-
-  elif [[ "$1" == "--zip" ]] ; then
-
-      INSTALL_ZIP=1
-      shift ;
-
-  elif [[ "$1" == "--python" ]] ; then
-
-      if [[ $2 -ne 2 ]] && [[ $2 -ne 3 ]] ; then
-          help_message
-      else
-          INSTALL_PYTHON_VERSION=$2
-          shift 2 ;
-      fi
-
-  elif [[ "$1" == "--branch" ]] ; then
-
-      INSTALL_BRANCH="$2"
-      shift 2 ;
-
-  else
-
-    help_message
-
-  fi # if-args
-  
-
-done # while-loop
+esac
+shift # past argument or value
+done
 
 # sanity checks
 if [[ $INSTALL_SCRIPTS ]] && [[ $INSTALL_DEVEL ]] ; then
