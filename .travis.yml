@@ -16,7 +16,11 @@ os:
 # Over there, your builds will run on a fully independent VM with 7.5 GB of (unshared) memory.
 sudo: required
 
-language: generic
+language: python
+
+python:
+#  - "2.7"
+  - "3.5"
 
 env:
   global:
