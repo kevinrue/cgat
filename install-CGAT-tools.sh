@@ -14,7 +14,7 @@ set -o pipefail
 #set -o nounset
 
 # trace what gets executed
-#set -o xtrace
+set -o xtrace
 
 # log installation information
 log() {
