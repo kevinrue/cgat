@@ -5,7 +5,7 @@
 # http://jvns.ca/blog/2017/03/26/bash-quirks/
 
 # exit when a command fails
-#set -o errexit
+set -o errexit
 
 # exit if any pipe commands fail
 set -o pipefail
@@ -15,6 +15,25 @@ set -o pipefail
 
 # trace what gets executed
 #set -o xtrace
+
+# Bash traps
+# http://aplawrence.com/Basics/trapping_errors.html
+# https://stelfox.net/blog/2013/11/fail-fast-in-bash-scripts/
+
+set -o errtrace
+
+error_handler() {
+   echo
+   echo "error occurred in:"
+   echo " - line number: ${1}"
+   shift
+   echo " - exit status: ${1}"
+   shift
+   echo " - command: ${@}"
+   echo
+}
+
+trap 'error_handler ${LINENO} $? ${BASH_COMMAND}' ERR INT TERM
 
 # log installation information
 log() {
