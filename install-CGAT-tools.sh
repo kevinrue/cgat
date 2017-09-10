@@ -557,7 +557,7 @@ INSTALL_BRANCH="master"
 # https://stackoverflow.com/questions/402377/using-getopts-in-bash-shell-script-to-get-long-and-short-command-line-options
 # https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 
-while [[ $# -gt 1 ]]
+while [[ $# -gt 0 ]]
 do
 key="$1"
 
@@ -623,7 +623,6 @@ case $key in
     ;;
 
 esac
-shift # past argument or value
 done
 
 # sanity checks
