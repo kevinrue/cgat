@@ -42,29 +42,23 @@ fi
 
 
 # configure environment variables 
-# set: CGAT_HOME, CONDA_INSTALL_DIR, CONDA_INSTALL_TYPE, INSTALL_PYTHON_VERSION
+# set: CGAT_HOME, CONDA_INSTALL_DIR, CONDA_INSTALL_TYPE
 get_cgat_env() {
 
 if [[ $TRAVIS_INSTALL ]] ; then
 
    CGAT_HOME=$TRAVIS_BUILD_DIR
    CONDA_INSTALL_TYPE="scripts-nosetests.yml"
-   INSTALL_PYTHON_VERSION=$TRAVIS_PYTHON_VERSION
 
 elif [[ $JENKINS_INSTALL ]] ; then
 
    CGAT_HOME=$WORKSPACE
    CONDA_INSTALL_TYPE="scripts-nosetests.yml"
-   INSTALL_PYTHON_VERSION=$JENKINS_PYTHON_VERSION
 
 else
 
    if [[ -z $CGAT_HOME  ]] ; then
       CGAT_HOME=$HOME/cgat-install
-   fi
-
-   if [[ -z $INSTALL_PYTHON_VERSION ]] ; then
-      INSTALL_PYTHON_VERSION=3
    fi
 
    if [[ $INSTALL_SCRIPTS ]] ; then
@@ -126,7 +120,6 @@ echo " CONDA_INSTALL_DIR: "$CONDA_INSTALL_DIR
 echo " CONDA_INSTALL_TYPE: "$CONDA_INSTALL_TYPE
 echo " CONDA_INSTALL_ENV: "$CONDA_INSTALL_ENV
 echo " PYTHONPATH: "$PYTHONPATH
-[[ ! $INSTALL_TEST ]] && echo " INSTALL_PYTHON_VERSION: "$INSTALL_PYTHON_VERSION
 [[ ! $INSTALL_TEST ]] && echo " INSTALL_BRANCH: "$INSTALL_BRANCH
 echo
 
@@ -548,8 +541,6 @@ UNINSTALL_DIR=
 CGAT_HOME=
 # instead of cloning with git, we can download zipped CGAT code
 INSTALL_ZIP=1
-# which python version to use
-INSTALL_PYTHON_VERSION=
 # which github branch to use (default: master)
 INSTALL_BRANCH="master"
 
