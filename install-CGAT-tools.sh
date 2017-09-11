@@ -268,7 +268,7 @@ if [[ "$OS" != "travis" ]] ; then
       setup_env_vars
 
       # brute force: modify console_scripts variable/entry point for cgat command
-      sed -i 's/CGATScripts/scripts/g' setup.py
+      sed -i'' -e 's/CGATScripts/scripts/g' setup.py
 
       # Python preparation
       # remove install_requires (no longer required with conda package)
