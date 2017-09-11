@@ -24,13 +24,20 @@ set -o errtrace
 
 error_handler() {
    echo
-   echo "error occurred in:"
+   echo " An error occurred in:"
+   echo
    echo " - line number: ${1}"
    shift
    echo " - exit status: ${1}"
    shift
    echo " - command: ${@}"
    echo
+   echo " The installation did not finish properly. "
+   echo
+   echo " Please copy and paste this error and report it via Git Hub: "
+   echo " https://github.com/CGATOxford/cgat/issues "
+   echo
+   print_env_vars
 }
 
 trap 'error_handler ${LINENO} $? ${BASH_COMMAND}' ERR INT TERM
@@ -240,12 +247,10 @@ if [[ "$OS" != "travis" ]] ; then
    # activate cgat environment
    source $CONDA_INSTALL_DIR/bin/activate $CONDA_INSTALL_ENV
 
-   if [[ $INSTALL_SCRIPTS ]] ; then
+   # bx-python is not py3 yet
+   pip install bx-python
 
-      # bx-python is not py3 yet
-      pip install bx-python
-
-   elif [[ $INSTALL_DEVEL ]] ; then
+   if [[ $INSTALL_DEVEL ]] ; then
 
       # make sure you are in the CGAT_HOME folder
       cd $CGAT_HOME

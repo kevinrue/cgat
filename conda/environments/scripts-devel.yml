@@ -80,5 +80,3 @@ dependencies:
 - ucsc-bedtobigbed=332
 - ucsc-wigtobigwig=332
 - zlib=1.2.8
-- pip:
-  - bx-python==0.7.3
