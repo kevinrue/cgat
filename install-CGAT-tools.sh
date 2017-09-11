@@ -258,9 +258,9 @@ if [[ "$OS" != "travis" ]] ; then
       if [[ $INSTALL_ZIP ]] ; then
 	 # get the latest version from Git Hub in zip format
          curl -LOk https://github.com/CGATOxford/cgat/archive/$INSTALL_BRANCH.zip
-         unzip master.zip
-         rm master.zip
-         mv cgat-master/ cgat-scripts/
+         unzip $INSTALL_BRANCH.zip
+         rm $INSTALL_BRANCH.zip
+         mv cgat-$INSTALL_BRANCH/ cgat-scripts/
       else
          # get latest version from Git Hub with git clone
          git clone --branch=$INSTALL_BRANCH https://github.com/CGATOxford/cgat.git $CGAT_HOME/cgat-scripts
