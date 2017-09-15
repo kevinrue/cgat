@@ -17,6 +17,9 @@ set -o pipefail
 # trace what gets executed
 #set -o xtrace
 
+
+# Global variables
+
 SCRIPT_FOLDER=$(dirname $0)
 REPO_FOLDER=$(dirname ${SCRIPT_FOLDER})
 TMP_SFOOD=$(mktemp)
@@ -123,7 +126,7 @@ R_DEPS[wasabi]="r-wasabi"
 R_DEPS[zinba]="ignore"
 
 
-# dictionary to translate R deps
+# dictionary to translate Misc deps
 declare -A MISC_DEPS
 MISC_DEPS[ascp]="ignore"
 MISC_DEPS[bamToBed]="bedtools"
@@ -250,36 +253,34 @@ fi
 
 # variable to choose scope
 ALL=1
-# variable to store input parameters
-INPUT_ARGS=$(getopt -n "$0" -o hap --long "help,
-                                           all,
-                                           production"  -- "$@")
-eval set -- "$INPUT_ARGS"
 
-# process all the input parameters first
-while [[ "$1" != "--" ]]
+# parse input parameters
+
+while [[ $# -gt 0 ]]
 do
+key="$1"
 
-   if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]] ; then
+case $key in
 
-      help_message
+    --help)
+    help_message
+    ;;
 
-   elif [[ "$1" == "--all" ]] ; then
+    --all)
+    ALL=1
+    shift
+    ;;
 
-      ALL=1
-      shift ;
+    --production)
+    ALL=0
+    shift
+    ;;
 
-   elif [[ "$1" == "--production" ]] ; then
+    *)
+    help_message
+    ;;
 
-      ALL=0
-      shift ;
-
-   else
-
-      help_message
-
-   fi
-
+esac
 done
 
 # requirement: snakefood
