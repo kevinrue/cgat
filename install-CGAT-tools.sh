@@ -238,17 +238,18 @@ else
    conda env create -f env.yml
 fi
 
+# activate cgat environment
+source $CONDA_INSTALL_DIR/bin/activate $CONDA_INSTALL_ENV
+
+# bx-python is not py3 yet
+pip install bx-python
+
+
 log "installing CGAT code into conda environment"
 # if installation is 'devel' (outside of travis), checkout latest version from github
 if [[ "$OS" != "travis" ]] ; then
 
    DEV_RESULT=0
-
-   # activate cgat environment
-   source $CONDA_INSTALL_DIR/bin/activate $CONDA_INSTALL_ENV
-
-   # bx-python is not py3 yet
-   pip install bx-python
 
    if [[ $INSTALL_DEVEL ]] ; then
 
