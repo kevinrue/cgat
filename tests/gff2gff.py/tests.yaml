@@ -51,4 +51,4 @@ rename_chr_ensembl:
     stdin: hg19.small.gtf.gz
     outputs: [stdout]
     references: [ensembl_renamed_chr.gtf]
-    options: --method=rename-chr --rename-chr-file=ucsc2ensembl.txt
+    options: --method=rename-chr --rename-chr-file=%DIR%/ucsc2ensembl.txt
