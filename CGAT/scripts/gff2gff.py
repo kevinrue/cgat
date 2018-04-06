@@ -372,22 +372,22 @@ def cropGFF(gffs, filename_gff):
 
 
 def renameChromosomes(gffs, chr_map):
-    
+
     ninput, noutput, nskipped = 0, 0, 0
-    
+
     for gff in gffs:
 
         ninput += 1
-        
+
         if gff.contig in chr_map.keys():
             gff.contig = chr_map[gff.contig]
         else:
             nskipped += 1
             continue
-        
+
         noutput += 1
         yield gff
-    
+
     E.info("ninput = %i, noutput=%i, nskipped=%i" %
            (ninput, noutput, nskipped))
 
@@ -528,10 +528,11 @@ def main(argv=None):
     parser.add_option(
         "--max-features", dest="max_features", type="int",
         help="maximum number of features to merge/join [%default].")
-        
-    parser.add_option("--rename-chr-file", dest="rename_chr_file", type="string",
-                       help="mapping table between old and new chromosome names."
-                       "TAB separated 2-column file.")
+
+    parser.add_option(
+        "--rename-chr-file", dest="rename_chr_file", type="string",
+        help="mapping table between old and new chromosome names."
+        "TAB separated 2-column file.")
 
     parser.set_defaults(
         input_filename_contigs=False,
@@ -571,7 +572,7 @@ def main(argv=None):
     contigs = None
     genome_fasta = None
     chr_map = None
-    
+
     if options.input_filename_contigs:
         contigs = Genomics.readContigSizes(
             IOTools.openFile(options.input_filename_contigs, "r"))
@@ -579,14 +580,15 @@ def main(argv=None):
     if options.genome_file:
         genome_fasta = IndexedFasta.IndexedFasta(options.genome_file)
         contigs = genome_fasta.getContigSizes()
-        
+
     if options.rename_chr_file:
         chr_map = {}
         with open(options.rename_chr_file, 'r') as filein:
             reader = csv.reader(filein, delimiter='\t')
             for row in reader:
                 if len(row) != 2:
-                    raise ValueError("Mapping table must have exactly two columns")
+                    raise ValueError(
+                        "Mapping table must have exactly two columns")
                 chr_map[row[0]] = row[1]
         if not len(chr_map.keys()) > 0:
             raise ValueError("Empty mapping dictionnary")
@@ -891,10 +893,10 @@ def main(argv=None):
     elif options.method == "rename-chr":
         if not chr_map:
                 raise ValueError("please supply mapping file")
-                
+
         for gff in renameChromosomes(gffs, chr_map):
             options.stdout.write(str(gff) + "\n")
-    
+
     else:
 
         for gff in gffs:
