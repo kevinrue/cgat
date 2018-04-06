@@ -124,7 +124,7 @@ Another example, to rename UCSC chromosomes to ENSEMBL.
 
 Type::
 
-   python gff2gff.py --help
+    python gff2gff.py --help
 
 for command line help.
 
